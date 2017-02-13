@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(ardrone_velocity)
+project(online_histogram)
 SET(CMAKE_CXX_FLAGS "-std=c++0x")
 
 ## Find catkin macros and libraries
@@ -77,9 +77,9 @@ find_package(catkin REQUIRED COMPONENTS
 #generate_messages(DEPENDENCIES  std_msgs)
 
 ## Generate dynamic parameters
-generate_dynamic_reconfigure_options(
-  cfg/dynamic_param_config.cfg
-)
+#generate_dynamic_reconfigure_options(
+  #cfg/dynamic_param_config.cfg
+#)
 
 
 ###################################
@@ -92,9 +92,9 @@ generate_dynamic_reconfigure_options(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
+  #INCLUDE_DIRS include
 #  LIBRARIES coop_uv
-  CATKIN_DEPENDS roscpp rospy std_msgs geometry_msgs nav_msgs
+  CATKIN_DEPENDS rospy
 #  DEPENDS system_lib
 )
 
@@ -104,28 +104,28 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include)
-include_directories(${catkin_INCLUDE_DIRS})
+#include_directories(include)
+#include_directories(${catkin_INCLUDE_DIRS})
 ## Declare a cpp library
 # add_library(coop_uv
 #   src/${PROJECT_NAME}/coop_uv.cpp
 # )
 
-set(PIDCONTROL_SOURCE_FILES
-    src/pid_control.cpp
-    src/controlnode.cpp
-    src/filtervelocity.cpp
-)
+#set(PIDCONTROL_SOURCE_FILES
+    #src/pid_control.cpp
+    #src/controlnode.cpp
+    #src/filtervelocity.cpp
+#)
 
-set(PIDCONTROL_HEADER_FILES
-    include/ardrone_velocity/controlnode.hpp
-    include/ardrone_velocity/filtervelocity.hpp
-)
+#set(PIDCONTROL_HEADER_FILES
+#    include/ardrone_velocity/controlnode.hpp
+#    include/ardrone_velocity/filtervelocity.hpp
+#)
 
 
 ## Declare a cpp executable
-add_executable(pid_control ${PIDCONTROL_SOURCE_FILES} ${PIDCONTROL_HEADER_FILES})
-add_executable(test_controller src/test_controller.cpp)
+#add_executable(pid_control ${PIDCONTROL_SOURCE_FILES} ${PIDCONTROL_HEADER_FILES})
+#add_executable(test_controller src/test_controller.cpp)
 #add_executable(mainQt src/mainQt.cpp)
 
 ## Add cmake target dependencies of the executable/library
@@ -134,11 +134,11 @@ add_executable(test_controller src/test_controller.cpp)
 #add_dependencies(pid_control ardrone_autonomy)
 #add_dependencies(test_controller ardrone_autonomy)
 
-add_dependencies(pid_control ${PROJECT_NAME}_gencfg)
+#add_dependencies(pid_control ${PROJECT_NAME}_gencfg)
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(pid_control ${catkin_LIBRARIES})
-target_link_libraries(test_controller ${catkin_LIBRARIES})
+#target_link_libraries(pid_control ${catkin_LIBRARIES})
+#target_link_libraries(test_controller ${catkin_LIBRARIES})
 
 
 #target_link_libraries(mainQt ${catkin_LIBRARIES} ${QT_LIBRARIES})
@@ -193,7 +193,6 @@ target_link_libraries(test_controller ${catkin_LIBRARIES})
 
 ##################
 # FOR QT CREATOR
-##################
-file(GLOB_RECURSE QT_MOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/ardrone_velocity/*.hpp)
-FILE(GLOB_RECURSE INC_ALL "include/coop_uv_qt/*.hpp")
-FILE(GLOB_RECURSE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
+#FILE(GLOB_RECURSE QT_MOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/ardrone_velocity/*.hpp)
+#FILE(GLOB_RECURSE INC_ALL "include/coop_uv_qt/*.hpp")
+#FILE(GLOB_RECURSE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
