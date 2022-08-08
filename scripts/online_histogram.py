@@ -4,15 +4,16 @@ from PlotWindow import PlotWindow
 
 import rospy
 import sys, random
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QApplication
 
 import numpy
-import matplotlib.mlab as mlab
+from matplotlib.ticker import MaxNLocator
 from scipy.stats import norm
 from collections import deque
 from std_msgs.msg import Int8
-from sensor_msgs.msg import Range
+from std_msgs.msg import Float32
 
 class OnlineHist(PlotWindow):
   def __init__(self):
@@ -21,11 +22,10 @@ class OnlineHist(PlotWindow):
     self.window_size=1000
     self.values= deque(maxlen=self.window_size)  #numpy.zeros((self.window_size))
     self.index=0
-    self.draw_counter =0
     self.paused = False
 
     rospy.init_node('visualizer', anonymous=True)
-    self.subscriber = rospy.Subscriber("range_data", Range, self.plotResults, queue_size = 1 )
+    self.subscriber = rospy.Subscriber("data", Float32, self.plotResults, queue_size = 1 )
     
     self.pauseButton.clicked.connect(self.pauseClicked)
     self.resetButton.clicked.connect(self.resetClicked)
@@ -37,7 +37,6 @@ class OnlineHist(PlotWindow):
        self.paused = True
   
   def resetClicked(self):
-    self.draw_counter =0  
     self.values.clear()
     self.index=0       
     self.paused = False
@@ -50,21 +49,17 @@ class OnlineHist(PlotWindow):
       self.index=0
     else:
       self.index=self.index+1
-    self.values.append(round(data.range,3))
+    self.values.append(data.data)
 
-    self.draw_counter = self.draw_counter + 1
-    
-    if self.draw_counter > 10 and not self.paused:
-        self.draw_counter = 0
-        
+    if not self.paused:
         self.axes.clear()        
-        n, bins, patches = self.axes.hist(list(self.values), bins = 100, normed=True, facecolor='green', alpha=0.75, align='left')
+        n, bins, patches = self.axes.hist(list(self.values), bins = 100, facecolor='green', alpha=0.75, align='left')
 
         #I want to also fit the data to a Gaussian
         # best fit of data
         (mu, sigma) = norm.fit(list(self.values))
         # add a 'best fit' line
-        y = mlab.normpdf( bins, mu, sigma)
+        y = len(self.values)*norm.pdf( bins, mu, sigma)
         l = self.axes.plot(bins, y, 'r--', linewidth=2)
 
         #self.axes.set_xticks(bins[:-1])
@@ -76,6 +71,7 @@ class OnlineHist(PlotWindow):
         min_y, max_y=self.axes.get_ylim()
         #max_x*0.5,max_y*0.5,output,horizontalalignment='left',verticalalignment='center')        
         self.axes.annotate(output, (0.05,0.9), xycoords = 'axes fraction') 
+        self.axes.yaxis.set_major_locator(MaxNLocator(integer=True))
         self.canvas.draw()
 
 if __name__ == "__main__":
