@@ -4,11 +4,11 @@ from PlotWindow import PlotWindow
 
 import rospy
 import sys, random
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QApplication
 
 import numpy
-import matplotlib.mlab as mlab
 from scipy.stats import norm
 from collections import deque
 from std_msgs.msg import Int8
@@ -58,13 +58,13 @@ class OnlineHist(PlotWindow):
         self.draw_counter = 0
         
         self.axes.clear()        
-        n, bins, patches = self.axes.hist(list(self.values), bins = 100, normed=True, facecolor='green', alpha=0.75, align='left')
+        n, bins, patches = self.axes.hist(list(self.values), bins = 100, facecolor='green', alpha=0.75, align='left')
 
         #I want to also fit the data to a Gaussian
         # best fit of data
         (mu, sigma) = norm.fit(list(self.values))
         # add a 'best fit' line
-        y = mlab.normpdf( bins, mu, sigma)
+        y = norm.pdf( bins, mu, sigma)
         l = self.axes.plot(bins, y, 'r--', linewidth=2)
 
         #self.axes.set_xticks(bins[:-1])
