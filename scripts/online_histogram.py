@@ -13,7 +13,7 @@ from matplotlib.ticker import MaxNLocator
 from scipy.stats import norm
 from collections import deque
 from std_msgs.msg import Int8
-from sensor_msgs.msg import Range
+from std_msgs.msg import Float32
 
 class OnlineHist(PlotWindow):
   def __init__(self):
@@ -22,11 +22,10 @@ class OnlineHist(PlotWindow):
     self.window_size=1000
     self.values= deque(maxlen=self.window_size)  #numpy.zeros((self.window_size))
     self.index=0
-    self.draw_counter =0
     self.paused = False
 
     rospy.init_node('visualizer', anonymous=True)
-    self.subscriber = rospy.Subscriber("range_data", Range, self.plotResults, queue_size = 1 )
+    self.subscriber = rospy.Subscriber("data", Float32, self.plotResults, queue_size = 1 )
     
     self.pauseButton.clicked.connect(self.pauseClicked)
     self.resetButton.clicked.connect(self.resetClicked)
@@ -38,7 +37,6 @@ class OnlineHist(PlotWindow):
        self.paused = True
   
   def resetClicked(self):
-    self.draw_counter =0  
     self.values.clear()
     self.index=0       
     self.paused = False
@@ -51,13 +49,9 @@ class OnlineHist(PlotWindow):
       self.index=0
     else:
       self.index=self.index+1
-    self.values.append(round(data.range,3))
+    self.values.append(data.data)
 
-    self.draw_counter = self.draw_counter + 1
-    
-    if self.draw_counter > 10 and not self.paused:
-        self.draw_counter = 0
-        
+    if not self.paused:
         self.axes.clear()        
         n, bins, patches = self.axes.hist(list(self.values), bins = 100, facecolor='green', alpha=0.75, align='left')
 
