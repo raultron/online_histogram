@@ -9,6 +9,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QApplication
 
 import numpy
+from matplotlib.ticker import MaxNLocator
 from scipy.stats import norm
 from collections import deque
 from std_msgs.msg import Int8
@@ -76,6 +77,7 @@ class OnlineHist(PlotWindow):
         min_y, max_y=self.axes.get_ylim()
         #max_x*0.5,max_y*0.5,output,horizontalalignment='left',verticalalignment='center')        
         self.axes.annotate(output, (0.05,0.9), xycoords = 'axes fraction') 
+        self.axes.yaxis.set_major_locator(MaxNLocator(integer=True))
         self.canvas.draw()
 
 if __name__ == "__main__":
